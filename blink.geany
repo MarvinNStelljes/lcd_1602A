@@ -1,0 +1,67 @@
+[editor]
+line_wrapping=false
+line_break_column=72
+auto_continue_multiline=true
+
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=4
+indent_type=1
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=blink
+base_path=/home/linux-ms/lab/dev_boards/arduino/sw/blink
+description=
+file_patterns=
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=0
+FILE_NAME_0=6370;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmain.c;0;4
+FILE_NAME_1=1349;Make;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmakefile;0;4
+FILE_NAME_2=220;None;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fblink.geany;0;4
+FILE_NAME_3=106;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Flcd_1602A.c;0;4
+FILE_NAME_4=1098;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Flcd_1602A.h;0;4
+FILE_NAME_5=224;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmain.h;0;4
+
+[VTE]
+last_dir=/home/linux-ms
+
+[build-menu]
+CFT_00_LB=_Compile
+CFT_00_CM=make all
+CFT_00_WD=%d
+CFT_01_LB=_Build
+CFT_01_CM=make program
+CFT_01_WD=%d
+filetypes=C;C++;None;
+NF_00_LB=_Make
+NF_00_CM=make
+NF_00_WD=
+C++FT_00_LB=_Compile
+C++FT_00_CM=make all
+C++FT_00_WD=%d
+C++FT_01_LB=_Build
+C++FT_01_CM=make program
+C++FT_01_WD=%d
+CFT_02_LB=_Lint
+CFT_02_CM=cppcheck --language=c --enable=warning,style --template=gcc "%f"
+CFT_02_WD=
+NoneFT_00_LB=compile
+NoneFT_00_CM=make all
+NoneFT_00_WD=%d
+NoneFT_01_LB=build
+NoneFT_01_CM=make program
+NoneFT_01_WD=%d

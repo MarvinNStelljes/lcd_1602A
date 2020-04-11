@@ -1,0 +1,42 @@
+//main.h
+
+
+
+
+#define F_CPU 16000000UL
+
+
+#define LCD_D4	PORTD4
+#define LCD_D5	PORTD5
+#define LCD_D6	PORTD6
+#define LCD_D7	PORTD7
+
+#define LOW_NIBBLE	0x0F
+#define HIGH_NIBBLE	0xF0
+
+#define LCD_DATA PORTD
+#define LCD_DATA_IN PIND
+
+#define RW_PIN	PORTD3
+#define RW_PORT	PORTD
+
+#define RS_PIN	PORTD2
+#define RS_PORT	PORTD
+
+#define LCD_EN	PORTB4
+#define LCD_EN_PORT	PORTB
+
+#define SENSOR		PORTB2
+#define SENSOR_PORT	PINB2
+
+#define BIT0 0b00000001
+#define BIT1 0b00000010
+#define BIT2 0b00000100
+#define BIT3 0b00001000
+#define BIT4 0b00010000
+#define BIT5 0b00100000
+#define BIT6 0b01000000
+#define BIT7 0b10000000
+
+
+
