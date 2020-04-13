@@ -1,0 +1,58 @@
+   1               		.file	"atmel_pin_config.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               	.global	configurate_pins
+  12               	configurate_pins:
+  13               	.LFB0:
+  14               		.file 1 "atmel_pin_config.c"
+   1:atmel_pin_config.c **** 
+   2:atmel_pin_config.c **** 
+   3:atmel_pin_config.c **** 
+   4:atmel_pin_config.c **** #include "atmel_pin_config.h"
+   5:atmel_pin_config.c **** #include <avr/io.h> 
+   6:atmel_pin_config.c **** 
+   7:atmel_pin_config.c **** void configurate_pins(void)
+   8:atmel_pin_config.c **** {
+  15               		.loc 1 8 0
+  16               		.cfi_startproc
+  17               	/* prologue: function */
+  18               	/* frame size = 0 */
+  19               	/* stack size = 0 */
+  20               	.L__stack_usage = 0
+   9:atmel_pin_config.c **** 	LCD_EN_test.port = &PORTB;
+  21               		.loc 1 9 0
+  22 0000 E0E0      		ldi r30,lo8(LCD_EN_test)
+  23 0002 F0E0      		ldi r31,hi8(LCD_EN_test)
+  24 0004 85E2      		ldi r24,lo8(37)
+  25 0006 90E0      		ldi r25,0
+  26 0008 9183      		std Z+1,r25
+  27 000a 8083      		st Z,r24
+  10:atmel_pin_config.c **** 	LCD_EN_test.pin = PORTB4;
+  28               		.loc 1 10 0
+  29 000c 84E0      		ldi r24,lo8(4)
+  30 000e 8283      		std Z+2,r24
+  31 0010 0895      		ret
+  32               		.cfi_endproc
+  33               	.LFE0:
+  35               		.comm	LCD_EN_test,3,1
+  36               	.Letext0:
+  37               		.file 2 "/usr/lib/avr/include/stdint.h"
+  38               		.file 3 "atmel_pin_config.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 atmel_pin_config.c
+     /tmp/cc2ucLtd.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc2ucLtd.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc2ucLtd.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc2ucLtd.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc2ucLtd.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc2ucLtd.s:12     .text:0000000000000000 configurate_pins
+                            *COM*:0000000000000003 LCD_EN_test
+
+UNDEFINED SYMBOLS
+__do_clear_bss

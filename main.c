@@ -7,53 +7,56 @@
 
 
 
-#include "lcd_1602A.h"
 #include "main.h"
 #include <avr/io.h> 
 #include <util/delay.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+
 #include <stdarg.h>
-//#include <avr/io.h>          // (1)
-//#include <util/delay.h>
 
 
-//#include "lcd_1602A.h"
+#include "lcd_1602A.h"
+#include "atmel_io_control.h"
+#include "atmel_pin_config.h"
 
 
 
-
-/*
-void set_bits(unsigned char *reg, unsigned char num, int first_bit, ...);
-void clear_bits(unsigned char *reg, unsigned char num, int first_bit, ...);
+	
 void lcd_write(unsigned char character);
-void lcd_write_string(unsigned char *string);
+void lcd_write_string(char *string);
 void put_lcd_data(uint8_t data);
 void put_lcd_nibble(uint8_t data);
+void debug_pin(uint8_t bit);
 
-*/
 
 
 int main (void) {   
+
+	
+
+
 	
 	_delay_ms (20);
+	
+	configurate_pins();
+	
 		DDRB = 0xFF;             // (3)
             
 	DDRD = 0xFF;         // (2)
 
-  
+               
  
     clear_bits(&PORTD, 2, RS_PIN, RW_PIN);
    _delay_ms (10); 
-   
+ 
 put_lcd_nibble(0x03);
 _delay_ms (4.1);
 
 put_lcd_nibble(0x03);
 _delay_us (100);
 
-              
+            
 
 
 
@@ -62,7 +65,11 @@ _delay_ms (4.1);
 put_lcd_nibble(0x02);
 _delay_ms (4.1);
 
+
+
 put_lcd_data(LCD_FUNCTION_SET | LCD_SET_4BIT_MODE | LCD_SET_2LINE_MODE | LCD_FONT_5X8_MODE);	
+
+  
 
 put_lcd_data(LCD_DISPLAY_OFF);
 
@@ -75,10 +82,11 @@ put_lcd_data(LCD_ENTRY_MODE | LCD_CURSOR_INC_DIR_RIGHT| LCD_SHIFT_OFF);
 
 put_lcd_data(LCD_DISPLAY_ON | LCD_CURSOR_ON | LCD_CURSOR_BLINK_ON);
 
-//----------------------------------------------------------------------
-	uint8_t formatted_string[40];
+ 
 
-int zahl = 0x55;
+//----------------------------------------------------------------------
+	char formatted_string[40];
+
 
 
 
@@ -138,41 +146,7 @@ int zahl = 0x55;
 
 
 
-void set_bits(unsigned char *reg, unsigned char num, int first_bit, ...) 
-{
-	va_list pointer;
-	 
-	*reg |= (1 << first_bit);
-	
-	if (num >1) {
-	
-		va_start(pointer, first_bit);
-		
-		while((num-1) > 0)  {
-			*reg |= (1 << va_arg(pointer, int));
-			num--;
-		}
-		va_end(pointer);
-	}
-}
-	
-	void clear_bits(unsigned char *reg, unsigned char num, int first_bit, ...) 
-{
-	va_list pointer;
-	
-	*reg &= ~(1 << first_bit);
-	 
-	if (num >1) {
-		
-		va_start(pointer, first_bit);
-		
-		while(num > 0)  {
-			*reg &= ~(1 << va_arg(pointer, int));
-			num--;
-		}
-		va_end(pointer);
-	}
-}
+
 	
 	void lcd_write(unsigned char character)
 	{
@@ -196,7 +170,7 @@ void set_bits(unsigned char *reg, unsigned char num, int first_bit, ...)
 }
 	
 
-void lcd_write_string(unsigned char *string)
+void lcd_write_string(char *string)
 {
 	int cnt = 0; 
 	
@@ -218,7 +192,6 @@ void lcd_write_string(unsigned char *string)
 		put_lcd_data(LCD_CARRIAGE_RETURN);
 		//while(get_lcd_busy_flag() > 0);
 		}
-	//_delay_ms (150);
 		string++;
 		cnt++;
 		
@@ -232,8 +205,6 @@ void put_lcd_data(uint8_t data)
 {
 	LCD_DATA &= ~((1 << LCD_D7) | (1 << LCD_D6) | (1 << LCD_D5) | (1 << LCD_D4));
 	
-	set_bits(&PORTB, 1, LCD_EN); 
-
 	if ((data & BIT7) != 0)
 		LCD_DATA |= (1 << LCD_D7);
 	if ((data & BIT6) != 0)
@@ -243,11 +214,10 @@ void put_lcd_data(uint8_t data)
 	if ((data & BIT4) != 0)
 		LCD_DATA |= (1 << LCD_D4);
 
-	clear_bits(&PORTB, 1, LCD_EN);
 
+toggle_LCD_EN_test(&LCD_EN_test);
+//toggle_LCD_EN(&PORTB, LCD_EN);
 	LCD_DATA &= ~((1 << LCD_D4) | (1 << LCD_D5) | (1 << LCD_D6) | (1 << LCD_D7));
-
-	set_bits(&PORTB, 1, LCD_EN);     
 
 	if ((data & BIT3) != 0)
 		LCD_DATA |= (1 << LCD_D7);
@@ -258,20 +228,18 @@ void put_lcd_data(uint8_t data)
 	if ((data & BIT0) != 0)
 		LCD_DATA |= (1 << LCD_D4);
 
-	clear_bits(&PORTB, 1, LCD_EN);
-	
-	
+	toggle_LCD_EN(&PORTB, LCD_EN);
+
 	
 	
 	while(get_lcd_busy_flag() > 0);  //Der ist wichtig!!!
 	
-	
+
 		
 }
 
 void put_lcd_nibble(uint8_t data)	
 {
-	set_bits(&PORTB, 1, LCD_EN); 
    _delay_ms (100);
 	LCD_DATA &= ~((1 << LCD_D7) | (1 << LCD_D6) | (1 << LCD_D5) | (1 << LCD_D4));
 	
@@ -284,7 +252,7 @@ void put_lcd_nibble(uint8_t data)
 	if ((data & BIT0) != 0)
 		LCD_DATA |= (1 << LCD_D4);
 	_delay_ms (100);
-	clear_bits(&PORTB, 1, LCD_EN);
+	toggle_LCD_EN(&PORTB, LCD_EN);
 }	
 
 
@@ -297,25 +265,8 @@ void   debug_pin(uint8_t bit)
 		_delay_ms (1000);
 }
 	
-	/*
-	put_lcd_conf
-	
-	get_lcd_data
-
-	
-	
-*/
 
 
-
-
-
-
-
-
-
-
-/*
 
 int get_lcd_busy_flag(void)
 {
@@ -324,13 +275,15 @@ int get_lcd_busy_flag(void)
 	uint8_t input_buffer = 0;
 	
 	DDRD &= ~( (1 << LCD_D7) | (1 << LCD_D6) | (1 << LCD_D5) | (1 << LCD_D4));	// Set LCD Port Pins as Input
-		
+	
 	clear_bits(&RS_PORT, 1, RS_PIN);
 	set_bits(&RW_PORT, 1, RW_PIN); 
 	_delay_ms (1);
+	
+	
 	set_bits(&PORTB, 1, LCD_EN);
 	_delay_ms (1);
-		
+	
 	if ((LCD_DATA_IN & (1 << LCD_D7)) != 0)
 		input_buffer |= (1 << 7);
 	if ((LCD_DATA_IN & (1 << LCD_D6)) != 0)
@@ -339,9 +292,10 @@ int get_lcd_busy_flag(void)
 		input_buffer |= (1 << 5);
 	if ((LCD_DATA_IN & (1 << LCD_D4)) != 0)
 		input_buffer |= (1 << 4);
-		
 		_delay_ms (1);
+	
 	clear_bits(&PORTB, 1, LCD_EN);
+   
    _delay_ms (1);
 	set_bits(&PORTB, 1, LCD_EN);
 	_delay_ms (1);
@@ -354,9 +308,8 @@ int get_lcd_busy_flag(void)
 		input_buffer |= (1 << 1);
 	if ((LCD_DATA_IN & (1 << LCD_D4)) != 0)
 		input_buffer |= (1 << 0);
-	
+	_delay_ms (1);
 	clear_bits(&PORTB, 1, LCD_EN);
-	
 	clear_bits(&RW_PORT, 1, RW_PIN);
 	
 	DDRD |= ((1 << LCD_D7) | (1 << LCD_D6) | (1 << LCD_D5) | (1 << LCD_D4));	// Set LCD Port Pins as Output
@@ -364,4 +317,15 @@ int get_lcd_busy_flag(void)
 
 	return ( input_buffer & 0b10000000);
 }
-*/
+
+
+
+
+
+
+
+
+
+
+
+

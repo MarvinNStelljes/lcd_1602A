@@ -1,0 +1,258 @@
+   1               		.file	"atmel_io_control.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.Ltext0:
+   9               		.cfi_sections	.debug_frame
+  10               	.global	set_bits
+  12               	set_bits:
+  13               	.LFB0:
+  14               		.file 1 "atmel_io_control.c"
+   1:atmel_io_control.c **** /// atmel_io_control.c /// Author: MarvinNStelljes ///
+   2:atmel_io_control.c **** /* Helper functions to manipulate input and output pins.
+   3:atmel_io_control.c ****  * Supported microcontrollers:	atmega328p
+   4:atmel_io_control.c ****  */
+   5:atmel_io_control.c **** 
+   6:atmel_io_control.c **** 
+   7:atmel_io_control.c **** #include <stdarg.h>
+   8:atmel_io_control.c **** 
+   9:atmel_io_control.c **** #include "atmel_io_control.h"
+  10:atmel_io_control.c **** /* Set a variable amount of bits.
+  11:atmel_io_control.c ****  * 	
+  12:atmel_io_control.c ****  * *reg			-	The address of Port which includes the pins to set
+  13:atmel_io_control.c ****  *  num			- 	Number of pins which has to be set
+  14:atmel_io_control.c ****  *  first_bit	- 	Pins to set as numbers from 0 - 7 
+  15:atmel_io_control.c ****  *  				It has to be set at least one pin
+  16:atmel_io_control.c ****  *
+  17:atmel_io_control.c ****  * Example: set_bits(&PORT_A, 2, PIN5, PIN6);  
+  18:atmel_io_control.c ****  *
+  19:atmel_io_control.c ****  */  
+  20:atmel_io_control.c **** void set_bits(volatile uint8_t *reg, uint8_t num, int first_bit, ...) 
+  21:atmel_io_control.c **** {
+  15               		.loc 1 21 0
+  16               		.cfi_startproc
+  17               	.LVL0:
+  18 0000 CF93      		push r28
+  19               	.LCFI0:
+  20               		.cfi_def_cfa_offset 3
+  21               		.cfi_offset 28, -2
+  22 0002 DF93      		push r29
+  23               	.LCFI1:
+  24               		.cfi_def_cfa_offset 4
+  25               		.cfi_offset 29, -3
+  26 0004 CDB7      		in r28,__SP_L__
+  27 0006 DEB7      		in r29,__SP_H__
+  28               	.LCFI2:
+  29               		.cfi_def_cfa_register 28
+  30               	/* prologue: function */
+  31               	/* frame size = 0 */
+  32               	/* stack size = 2 */
+  33               	.L__stack_usage = 2
+  34 0008 ED81      		ldd r30,Y+5
+  35 000a FE81      		ldd r31,Y+6
+  36 000c 2F81      		ldd r18,Y+7
+  22:atmel_io_control.c **** 	va_list pointer;	
+  23:atmel_io_control.c **** 	 
+  24:atmel_io_control.c **** 	*reg |= (1 << first_bit);	// Set the first pin
+  37               		.loc 1 24 0
+  38 000e 3081      		ld r19,Z
+  39 0010 81E0      		ldi r24,lo8(1)
+  40 0012 90E0      		ldi r25,0
+  41 0014 0884      		ldd r0,Y+8
+  42 0016 00C0      		rjmp 2f
+  43               		1:
+  44 0018 880F      		lsl r24
+  45 001a 991F      		rol r25
+  46               		2:
+  47 001c 0A94      		dec r0
+  48 001e 02F4      		brpl 1b
+  49 0020 832B      		or r24,r19
+  50 0022 8083      		st Z,r24
+  25:atmel_io_control.c **** 	
+  26:atmel_io_control.c **** 	// If there are more then one argument, the remaining pins must be 
+  27:atmel_io_control.c **** 	// set
+  28:atmel_io_control.c **** 	if (num >1) {
+  51               		.loc 1 28 0
+  52 0024 2230      		cpi r18,lo8(2)
+  53 0026 00F0      		brlo .L1
+  54               	.LVL1:
+  55 0028 DE01      		movw r26,r28
+  56 002a 1A96      		adiw r26,10
+  29:atmel_io_control.c **** 	
+  30:atmel_io_control.c **** 		va_start(pointer, first_bit);	// Initalize the arg pointer
+  31:atmel_io_control.c **** 		
+  32:atmel_io_control.c **** 		while((num-1) > 0)  {
+  33:atmel_io_control.c **** 			*reg |= (1 << va_arg(pointer, int));	// Set next pin
+  57               		.loc 1 33 0
+  58 002c 41E0      		ldi r20,lo8(1)
+  59 002e 50E0      		ldi r21,0
+  60               	.LVL2:
+  61               	.L3:
+  32:atmel_io_control.c **** 			*reg |= (1 << va_arg(pointer, int));	// Set next pin
+  62               		.loc 1 32 0
+  63 0030 822F      		mov r24,r18
+  64 0032 90E0      		ldi r25,0
+  65 0034 0297      		sbiw r24,2
+  66 0036 04F0      		brlt .L1
+  67               		.loc 1 33 0
+  68 0038 8C91      		ld r24,X
+  69 003a 1296      		adiw r26,2
+  70 003c 3081      		ld r19,Z
+  71 003e BA01      		movw r22,r20
+  72 0040 00C0      		rjmp 2f
+  73               		1:
+  74 0042 660F      		lsl r22
+  75 0044 771F      		rol r23
+  76               		2:
+  77 0046 8A95      		dec r24
+  78 0048 02F4      		brpl 1b
+  79 004a CB01      		movw r24,r22
+  80 004c 832B      		or r24,r19
+  81 004e 8083      		st Z,r24
+  34:atmel_io_control.c **** 			num--;
+  82               		.loc 1 34 0
+  83 0050 2150      		subi r18,lo8(-(-1))
+  84               	.LVL3:
+  85 0052 00C0      		rjmp .L3
+  86               	.LVL4:
+  87               	.L1:
+  88               	/* epilogue start */
+  35:atmel_io_control.c **** 		}
+  36:atmel_io_control.c **** 		va_end(pointer);
+  37:atmel_io_control.c **** 	}
+  38:atmel_io_control.c **** }
+  89               		.loc 1 38 0
+  90 0054 DF91      		pop r29
+  91 0056 CF91      		pop r28
+  92 0058 0895      		ret
+  93               		.cfi_endproc
+  94               	.LFE0:
+  96               	.global	clear_bits
+  98               	clear_bits:
+  99               	.LFB1:
+  39:atmel_io_control.c **** 
+  40:atmel_io_control.c **** /* Clear a variable amount of bits.
+  41:atmel_io_control.c ****  * 	
+  42:atmel_io_control.c ****  * *reg			-	The address of Port which includes the pins to clear
+  43:atmel_io_control.c ****  *  num			- 	Number of pins which has to be clear
+  44:atmel_io_control.c ****  *  first_bit	- 	Pins to clear as numbers from 0 - 7 
+  45:atmel_io_control.c ****  *  				It has to be set at least one pin
+  46:atmel_io_control.c ****  *
+  47:atmel_io_control.c ****  * Example: clear_bits(&PORT_A, 1, PIN6);  
+  48:atmel_io_control.c ****  *
+  49:atmel_io_control.c ****  */  	
+  50:atmel_io_control.c **** void clear_bits(volatile uint8_t *reg, uint8_t num, int first_bit, ...) 
+  51:atmel_io_control.c **** {
+ 100               		.loc 1 51 0
+ 101               		.cfi_startproc
+ 102               	.LVL5:
+ 103 005a CF93      		push r28
+ 104               	.LCFI3:
+ 105               		.cfi_def_cfa_offset 3
+ 106               		.cfi_offset 28, -2
+ 107 005c DF93      		push r29
+ 108               	.LCFI4:
+ 109               		.cfi_def_cfa_offset 4
+ 110               		.cfi_offset 29, -3
+ 111 005e CDB7      		in r28,__SP_L__
+ 112 0060 DEB7      		in r29,__SP_H__
+ 113               	.LCFI5:
+ 114               		.cfi_def_cfa_register 28
+ 115               	/* prologue: function */
+ 116               	/* frame size = 0 */
+ 117               	/* stack size = 2 */
+ 118               	.L__stack_usage = 2
+ 119 0062 ED81      		ldd r30,Y+5
+ 120 0064 FE81      		ldd r31,Y+6
+ 121 0066 2F81      		ldd r18,Y+7
+  52:atmel_io_control.c **** 	va_list pointer;
+  53:atmel_io_control.c **** 	
+  54:atmel_io_control.c **** 	*reg &= ~(1 << first_bit);	// Clear the first pin
+ 122               		.loc 1 54 0
+ 123 0068 3081      		ld r19,Z
+ 124 006a 81E0      		ldi r24,lo8(1)
+ 125 006c 90E0      		ldi r25,0
+ 126 006e 0884      		ldd r0,Y+8
+ 127 0070 00C0      		rjmp 2f
+ 128               		1:
+ 129 0072 880F      		lsl r24
+ 130 0074 991F      		rol r25
+ 131               		2:
+ 132 0076 0A94      		dec r0
+ 133 0078 02F4      		brpl 1b
+ 134 007a 8095      		com r24
+ 135 007c 8323      		and r24,r19
+ 136 007e 8083      		st Z,r24
+  55:atmel_io_control.c **** 	 
+  56:atmel_io_control.c **** 	// If there are more then one argument, the remaining pins must be
+  57:atmel_io_control.c **** 	// cleared 
+  58:atmel_io_control.c **** 	if (num >1) {
+ 137               		.loc 1 58 0
+ 138 0080 2230      		cpi r18,lo8(2)
+ 139 0082 00F0      		brlo .L6
+ 140               	.LVL6:
+ 141 0084 DE01      		movw r26,r28
+ 142 0086 1A96      		adiw r26,10
+  59:atmel_io_control.c **** 		
+  60:atmel_io_control.c **** 		va_start(pointer, first_bit);	
+  61:atmel_io_control.c **** 		
+  62:atmel_io_control.c **** 		while(num > 0)  {
+  63:atmel_io_control.c **** 			*reg &= ~(1 << va_arg(pointer, int));	// Clear next pin
+ 143               		.loc 1 63 0
+ 144 0088 41E0      		ldi r20,lo8(1)
+ 145 008a 50E0      		ldi r21,0
+ 146               	.LVL7:
+ 147               	.L8:
+ 148 008c 8C91      		ld r24,X
+ 149 008e 1296      		adiw r26,2
+ 150 0090 3081      		ld r19,Z
+ 151 0092 BA01      		movw r22,r20
+ 152 0094 00C0      		rjmp 2f
+ 153               		1:
+ 154 0096 660F      		lsl r22
+ 155 0098 771F      		rol r23
+ 156               		2:
+ 157 009a 8A95      		dec r24
+ 158 009c 02F4      		brpl 1b
+ 159 009e CB01      		movw r24,r22
+ 160 00a0 8095      		com r24
+ 161 00a2 9095      		com r25
+ 162 00a4 8323      		and r24,r19
+ 163 00a6 8083      		st Z,r24
+  64:atmel_io_control.c **** 			num--;
+ 164               		.loc 1 64 0
+ 165 00a8 2150      		subi r18,lo8(-(-1))
+ 166               	.LVL8:
+  62:atmel_io_control.c **** 			*reg &= ~(1 << va_arg(pointer, int));	// Clear next pin
+ 167               		.loc 1 62 0
+ 168 00aa 01F4      		brne .L8
+ 169               	.LVL9:
+ 170               	.L6:
+ 171               	/* epilogue start */
+  65:atmel_io_control.c **** 		}
+  66:atmel_io_control.c **** 		va_end(pointer);
+  67:atmel_io_control.c **** 	}
+  68:atmel_io_control.c **** }
+ 172               		.loc 1 68 0
+ 173 00ac DF91      		pop r29
+ 174 00ae CF91      		pop r28
+ 175 00b0 0895      		ret
+ 176               		.cfi_endproc
+ 177               	.LFE1:
+ 179               	.Letext0:
+ 180               		.file 2 "/usr/lib/gcc/avr/5.4.0/include/stdarg.h"
+ 181               		.file 3 "/usr/lib/avr/include/stdint.h"
+DEFINED SYMBOLS
+                            *ABS*:0000000000000000 atmel_io_control.c
+     /tmp/ccInzTTw.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/ccInzTTw.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/ccInzTTw.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/ccInzTTw.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/ccInzTTw.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/ccInzTTw.s:12     .text:0000000000000000 set_bits
+     /tmp/ccInzTTw.s:98     .text:000000000000005a clear_bits
+
+NO UNDEFINED SYMBOLS

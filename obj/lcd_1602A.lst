@@ -7,8 +7,8 @@
    7               		.text
    8               	.Ltext0:
    9               		.cfi_sections	.debug_frame
-  10               	.global	get_lcd_busy_flag
-  12               	get_lcd_busy_flag:
+  10               	.global	toggle_LCD_EN
+  12               	toggle_LCD_EN:
   13               	.LFB6:
   14               		.file 1 "lcd_1602A.c"
    1:lcd_1602A.c   **** //lcd_1602A.c
@@ -17,59 +17,71 @@
    4:lcd_1602A.c   **** 
    5:lcd_1602A.c   **** 
    6:lcd_1602A.c   **** 
-   7:lcd_1602A.c   **** #include "main.h"
+   7:lcd_1602A.c   **** #include <util/delay.h>
    8:lcd_1602A.c   **** #include "lcd_1602A.h"
-   9:lcd_1602A.c   **** #include <avr/io.h> 
-  10:lcd_1602A.c   **** #include <util/delay.h>
+   9:lcd_1602A.c   **** 
+  10:lcd_1602A.c   **** 
   11:lcd_1602A.c   **** 
   12:lcd_1602A.c   **** 
-  13:lcd_1602A.c   **** 
-  14:lcd_1602A.c   **** int get_lcd_busy_flag(void)
-  15:lcd_1602A.c   **** {
-  15               		.loc 1 15 0
-  16               		.cfi_startproc
-  17 0000 CF93      		push r28
-  18               	.LCFI0:
-  19               		.cfi_def_cfa_offset 3
-  20               		.cfi_offset 28, -2
-  21               	/* prologue: function */
-  22               	/* frame size = 0 */
-  23               	/* stack size = 1 */
-  24               	.L__stack_usage = 1
-  25               	.LVL0:
-  16:lcd_1602A.c   **** 	// TODO: add address counter
+  13:lcd_1602A.c   **** /////-----void toggle_LCD_EN(void)-----/////
+  14:lcd_1602A.c   **** /*Toggle the LCD enable pin to transmit or receive data. The data to tranceive have to be set on ou
+  15:lcd_1602A.c   **** 
+  16:lcd_1602A.c   **** void toggle_LCD_EN(volatile uint8_t *port, int lcd_enable_pin)
   17:lcd_1602A.c   **** 
-  18:lcd_1602A.c   **** 	uint8_t input_buffer = 0;
-  19:lcd_1602A.c   **** 	
-  20:lcd_1602A.c   **** 	DDRD &= ~( (1 << LCD_D7) | (1 << LCD_D6) | (1 << LCD_D5) | (1 << LCD_D4));	// Set LCD Port Pins as
-  26               		.loc 1 20 0
-  27 0002 8AB1      		in r24,0xa
-  28 0004 8F70      		andi r24,lo8(15)
-  29 0006 8AB9      		out 0xa,r24
-  21:lcd_1602A.c   **** 		
-  22:lcd_1602A.c   **** 	clear_bits(&RS_PORT, 1, RS_PIN);
-  30               		.loc 1 22 0
-  31 0008 42E0      		ldi r20,lo8(2)
-  32 000a 50E0      		ldi r21,0
-  33 000c 61E0      		ldi r22,lo8(1)
-  34 000e 70E0      		ldi r23,0
-  35 0010 8BE2      		ldi r24,lo8(43)
-  36 0012 90E0      		ldi r25,0
-  37 0014 0E94 0000 		call clear_bits
-  38               	.LVL1:
-  23:lcd_1602A.c   **** 	set_bits(&RW_PORT, 1, RW_PIN); 
-  39               		.loc 1 23 0
-  40 0018 43E0      		ldi r20,lo8(3)
-  41 001a 50E0      		ldi r21,0
-  42 001c 61E0      		ldi r22,lo8(1)
-  43 001e 70E0      		ldi r23,0
-  44 0020 8BE2      		ldi r24,lo8(43)
-  45 0022 90E0      		ldi r25,0
-  46 0024 0E94 0000 		call set_bits
-  47               	.LVL2:
-  48               	.LBB14:
-  49               	.LBB15:
-  50               		.file 2 "/usr/lib/avr/include/util/delay.h"
+  18:lcd_1602A.c   **** {
+  15               		.loc 1 18 0
+  16               		.cfi_startproc
+  17               	.LVL0:
+  18 0000 FF92      		push r15
+  19               	.LCFI0:
+  20               		.cfi_def_cfa_offset 3
+  21               		.cfi_offset 15, -2
+  22 0002 0F93      		push r16
+  23               	.LCFI1:
+  24               		.cfi_def_cfa_offset 4
+  25               		.cfi_offset 16, -3
+  26 0004 1F93      		push r17
+  27               	.LCFI2:
+  28               		.cfi_def_cfa_offset 5
+  29               		.cfi_offset 17, -4
+  30 0006 CF93      		push r28
+  31               	.LCFI3:
+  32               		.cfi_def_cfa_offset 6
+  33               		.cfi_offset 28, -5
+  34 0008 DF93      		push r29
+  35               	.LCFI4:
+  36               		.cfi_def_cfa_offset 7
+  37               		.cfi_offset 29, -6
+  38               	/* prologue: function */
+  39               	/* frame size = 0 */
+  40               	/* stack size = 5 */
+  41               	.L__stack_usage = 5
+  42 000a EC01      		movw r28,r24
+  43 000c 062F      		mov r16,r22
+  44 000e F72E      		mov r15,r23
+  19:lcd_1602A.c   **** 	clear_bits(port, 1, lcd_enable_pin);
+  45               		.loc 1 19 0
+  46 0010 7F93      		push r23
+  47               	.LCFI5:
+  48               		.cfi_def_cfa_offset 8
+  49 0012 6F93      		push r22
+  50               	.LCFI6:
+  51               		.cfi_def_cfa_offset 9
+  52 0014 11E0      		ldi r17,lo8(1)
+  53 0016 1F93      		push r17
+  54               	.LCFI7:
+  55               		.cfi_def_cfa_offset 10
+  56 0018 DF93      		push r29
+  57               	.LCFI8:
+  58               		.cfi_def_cfa_offset 11
+  59 001a 8F93      		push r24
+  60               	.LCFI9:
+  61               		.cfi_def_cfa_offset 12
+  62 001c 0E94 0000 		call clear_bits
+  63               	.LVL1:
+  64               	.LBB10:
+  65               	.LBB11:
+  66               		.file 2 "/usr/lib/avr/include/util/delay.h"
    1:/usr/lib/avr/include/util/delay.h **** /* Copyright (c) 2002, Marek Michalkiewicz
    2:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2004,2005,2007 Joerg Wunsch
    3:/usr/lib/avr/include/util/delay.h ****    Copyright (c) 2007  Florin-Viorel Petrov
@@ -257,278 +269,310 @@
  185:/usr/lib/avr/include/util/delay.h **** 	#endif
  186:/usr/lib/avr/include/util/delay.h **** 
  187:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
-  51               		.loc 2 187 0
-  52 0028 8FE9      		ldi r24,lo8(3999)
-  53 002a 9FE0      		ldi r25,hi8(3999)
-  54 002c 0197      	1:	sbiw r24,1
-  55 002e 01F4      		brne 1b
-  56 0030 00C0      		rjmp .
-  57 0032 0000      		nop
-  58               	.LVL3:
-  59               	.LBE15:
-  60               	.LBE14:
-  24:lcd_1602A.c   **** 	_delay_ms (1);
-  25:lcd_1602A.c   **** 	set_bits(&PORTB, 1, LCD_EN);
-  61               		.loc 1 25 0
-  62 0034 44E0      		ldi r20,lo8(4)
-  63 0036 50E0      		ldi r21,0
-  64 0038 61E0      		ldi r22,lo8(1)
-  65 003a 70E0      		ldi r23,0
-  66 003c 85E2      		ldi r24,lo8(37)
-  67 003e 90E0      		ldi r25,0
-  68 0040 0E94 0000 		call set_bits
-  69               	.LVL4:
-  70               	.LBB16:
-  71               	.LBB17:
-  72               		.loc 2 187 0
-  73 0044 8FE9      		ldi r24,lo8(3999)
-  74 0046 9FE0      		ldi r25,hi8(3999)
-  75 0048 0197      	1:	sbiw r24,1
-  76 004a 01F4      		brne 1b
-  77 004c 00C0      		rjmp .
-  78 004e 0000      		nop
-  79               	.LVL5:
-  80               	.LBE17:
-  81               	.LBE16:
-  26:lcd_1602A.c   **** 	_delay_ms (1);
-  27:lcd_1602A.c   **** 		
-  28:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D7)) != 0)
-  82               		.loc 1 28 0
-  83 0050 4F9B      		sbis 0x9,7
-  84 0052 00C0      		rjmp .L10
-  29:lcd_1602A.c   **** 		input_buffer |= (1 << 7);
-  85               		.loc 1 29 0
-  86 0054 C0E8      		ldi r28,lo8(-128)
-  87 0056 00C0      		rjmp .L2
-  88               	.L10:
-  18:lcd_1602A.c   **** 	
-  89               		.loc 1 18 0
-  90 0058 C0E0      		ldi r28,0
-  91               	.L2:
-  92               	.LVL6:
-  30:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D6)) != 0)
-  93               		.loc 1 30 0
-  94 005a 4E99      		sbic 0x9,6
-  31:lcd_1602A.c   **** 		input_buffer |= (1 << 6);
-  95               		.loc 1 31 0
-  96 005c C064      		ori r28,lo8(64)
-  97               	.LVL7:
-  98               	.L3:
-  32:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D5)) != 0)
-  99               		.loc 1 32 0
- 100 005e 4D99      		sbic 0x9,5
-  33:lcd_1602A.c   **** 		input_buffer |= (1 << 5);
- 101               		.loc 1 33 0
- 102 0060 C062      		ori r28,lo8(32)
- 103               	.LVL8:
- 104               	.L4:
-  34:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D4)) != 0)
- 105               		.loc 1 34 0
- 106 0062 4C99      		sbic 0x9,4
-  35:lcd_1602A.c   **** 		input_buffer |= (1 << 4);
- 107               		.loc 1 35 0
- 108 0064 C061      		ori r28,lo8(16)
- 109               	.LVL9:
- 110               	.L5:
- 111               	.LBB18:
- 112               	.LBB19:
- 113               		.loc 2 187 0
- 114 0066 8FE9      		ldi r24,lo8(3999)
- 115 0068 9FE0      		ldi r25,hi8(3999)
- 116 006a 0197      	1:	sbiw r24,1
- 117 006c 01F4      		brne 1b
- 118 006e 00C0      		rjmp .
- 119 0070 0000      		nop
- 120               	.LVL10:
- 121               	.LBE19:
- 122               	.LBE18:
-  36:lcd_1602A.c   **** 		
-  37:lcd_1602A.c   **** 		_delay_ms (1);
-  38:lcd_1602A.c   **** 	clear_bits(&PORTB, 1, LCD_EN);
- 123               		.loc 1 38 0
- 124 0072 44E0      		ldi r20,lo8(4)
- 125 0074 50E0      		ldi r21,0
- 126 0076 61E0      		ldi r22,lo8(1)
- 127 0078 70E0      		ldi r23,0
- 128 007a 85E2      		ldi r24,lo8(37)
- 129 007c 90E0      		ldi r25,0
- 130 007e 0E94 0000 		call clear_bits
- 131               	.LVL11:
- 132               	.LBB20:
- 133               	.LBB21:
- 134               		.loc 2 187 0
- 135 0082 8FE9      		ldi r24,lo8(3999)
- 136 0084 9FE0      		ldi r25,hi8(3999)
- 137 0086 0197      	1:	sbiw r24,1
- 138 0088 01F4      		brne 1b
- 139 008a 00C0      		rjmp .
- 140 008c 0000      		nop
- 141               	.LVL12:
- 142               	.LBE21:
- 143               	.LBE20:
-  39:lcd_1602A.c   ****    _delay_ms (1);
-  40:lcd_1602A.c   **** 	set_bits(&PORTB, 1, LCD_EN);
- 144               		.loc 1 40 0
- 145 008e 44E0      		ldi r20,lo8(4)
- 146 0090 50E0      		ldi r21,0
- 147 0092 61E0      		ldi r22,lo8(1)
- 148 0094 70E0      		ldi r23,0
- 149 0096 85E2      		ldi r24,lo8(37)
- 150 0098 90E0      		ldi r25,0
- 151 009a 0E94 0000 		call set_bits
- 152               	.LVL13:
- 153               	.LBB22:
- 154               	.LBB23:
- 155               		.loc 2 187 0
- 156 009e 8FE9      		ldi r24,lo8(3999)
- 157 00a0 9FE0      		ldi r25,hi8(3999)
- 158 00a2 0197      	1:	sbiw r24,1
- 159 00a4 01F4      		brne 1b
- 160 00a6 00C0      		rjmp .
- 161 00a8 0000      		nop
- 162               	.LVL14:
- 163               	.LBE23:
- 164               	.LBE22:
-  41:lcd_1602A.c   **** 	_delay_ms (1);
-  42:lcd_1602A.c   **** 	
-  43:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D7)) != 0)
- 165               		.loc 1 43 0
- 166 00aa 4F99      		sbic 0x9,7
-  44:lcd_1602A.c   **** 		input_buffer |= (1 << 3);
- 167               		.loc 1 44 0
- 168 00ac C860      		ori r28,lo8(8)
- 169               	.LVL15:
- 170               	.L6:
-  45:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D6)) != 0)
- 171               		.loc 1 45 0
- 172 00ae 4E99      		sbic 0x9,6
-  46:lcd_1602A.c   **** 		input_buffer |= (1 << 2);
- 173               		.loc 1 46 0
- 174 00b0 C460      		ori r28,lo8(4)
- 175               	.LVL16:
- 176               	.L7:
-  47:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D5)) != 0)
- 177               		.loc 1 47 0
- 178 00b2 4D99      		sbic 0x9,5
-  48:lcd_1602A.c   **** 		input_buffer |= (1 << 1);
- 179               		.loc 1 48 0
- 180 00b4 C260      		ori r28,lo8(2)
- 181               	.LVL17:
- 182               	.L8:
-  49:lcd_1602A.c   **** 	if ((LCD_DATA_IN & (1 << LCD_D4)) != 0)
- 183               		.loc 1 49 0
- 184 00b6 4C99      		sbic 0x9,4
-  50:lcd_1602A.c   **** 		input_buffer |= (1 << 0);
- 185               		.loc 1 50 0
- 186 00b8 C160      		ori r28,lo8(1)
- 187               	.LVL18:
- 188               	.L9:
-  51:lcd_1602A.c   **** 	
-  52:lcd_1602A.c   **** 	clear_bits(&PORTB, 1, LCD_EN);
- 189               		.loc 1 52 0
- 190 00ba 44E0      		ldi r20,lo8(4)
- 191 00bc 50E0      		ldi r21,0
- 192 00be 61E0      		ldi r22,lo8(1)
- 193 00c0 70E0      		ldi r23,0
- 194 00c2 85E2      		ldi r24,lo8(37)
- 195 00c4 90E0      		ldi r25,0
- 196 00c6 0E94 0000 		call clear_bits
- 197               	.LVL19:
-  53:lcd_1602A.c   **** 	
-  54:lcd_1602A.c   **** 	clear_bits(&RW_PORT, 1, RW_PIN);
- 198               		.loc 1 54 0
- 199 00ca 43E0      		ldi r20,lo8(3)
- 200 00cc 50E0      		ldi r21,0
- 201 00ce 61E0      		ldi r22,lo8(1)
- 202 00d0 70E0      		ldi r23,0
- 203 00d2 8BE2      		ldi r24,lo8(43)
- 204 00d4 90E0      		ldi r25,0
- 205 00d6 0E94 0000 		call clear_bits
- 206               	.LVL20:
-  55:lcd_1602A.c   **** 	
-  56:lcd_1602A.c   **** 	DDRD |= ((1 << LCD_D7) | (1 << LCD_D6) | (1 << LCD_D5) | (1 << LCD_D4));	// Set LCD Port Pins as O
- 207               		.loc 1 56 0
- 208 00da 8AB1      		in r24,0xa
- 209 00dc 806F      		ori r24,lo8(-16)
- 210 00de 8AB9      		out 0xa,r24
-  57:lcd_1602A.c   **** 
-  58:lcd_1602A.c   **** 
-  59:lcd_1602A.c   **** 	return ( input_buffer & 0b10000000);
- 211               		.loc 1 59 0
- 212 00e0 8C2F      		mov r24,r28
- 213 00e2 8078      		andi r24,lo8(-128)
-  60:lcd_1602A.c   **** }
- 214               		.loc 1 60 0
- 215 00e4 90E0      		ldi r25,0
- 216               	/* epilogue start */
- 217 00e6 CF91      		pop r28
- 218               	.LVL21:
- 219 00e8 0895      		ret
- 220               		.cfi_endproc
- 221               	.LFE6:
- 223               	.global	toggle_LCD_EN
- 225               	toggle_LCD_EN:
- 226               	.LFB7:
-  61:lcd_1602A.c   **** 
-  62:lcd_1602A.c   **** 
-  63:lcd_1602A.c   **** /////-----void toggle_LCD_EN(void)-----/////
-  64:lcd_1602A.c   **** /*Toggle the LCD enable pin to transmit or receive data. The data to tranceive have to be set on ou
-  65:lcd_1602A.c   **** 
-  66:lcd_1602A.c   **** void toggle_LCD_EN(void)
-  67:lcd_1602A.c   **** {
- 227               		.loc 1 67 0
- 228               		.cfi_startproc
- 229               	/* prologue: function */
- 230               	/* frame size = 0 */
- 231               	/* stack size = 0 */
- 232               	.L__stack_usage = 0
-  68:lcd_1602A.c   **** 	set_bits(&LCD_EN_PORT, 1, LCD_EN);
- 233               		.loc 1 68 0
- 234 00ea 44E0      		ldi r20,lo8(4)
- 235 00ec 50E0      		ldi r21,0
- 236 00ee 61E0      		ldi r22,lo8(1)
- 237 00f0 70E0      		ldi r23,0
- 238 00f2 85E2      		ldi r24,lo8(37)
- 239 00f4 90E0      		ldi r25,0
- 240 00f6 0E94 0000 		call set_bits
- 241               	.LVL22:
- 242               	.LBB24:
- 243               	.LBB25:
- 244               		.loc 2 187 0
- 245 00fa 8FE9      		ldi r24,lo8(3999)
- 246 00fc 9FE0      		ldi r25,hi8(3999)
- 247 00fe 0197      	1:	sbiw r24,1
- 248 0100 01F4      		brne 1b
- 249 0102 00C0      		rjmp .
- 250 0104 0000      		nop
- 251               	.LVL23:
- 252               	.LBE25:
- 253               	.LBE24:
-  69:lcd_1602A.c   **** 	_delay_ms (1);
-  70:lcd_1602A.c   **** 	clear_bits(&LCD_EN_PORT, 1, LCD_EN);
- 254               		.loc 1 70 0
- 255 0106 44E0      		ldi r20,lo8(4)
- 256 0108 50E0      		ldi r21,0
- 257 010a 61E0      		ldi r22,lo8(1)
- 258 010c 70E0      		ldi r23,0
- 259 010e 85E2      		ldi r24,lo8(37)
- 260 0110 90E0      		ldi r25,0
- 261 0112 0C94 0000 		jmp clear_bits
- 262               	.LVL24:
- 263               		.cfi_endproc
- 264               	.LFE7:
- 266               	.Letext0:
- 267               		.file 3 "/usr/lib/avr/include/stdint.h"
+ 188:/usr/lib/avr/include/util/delay.h **** 
+ 189:/usr/lib/avr/include/util/delay.h **** #else
+ 190:/usr/lib/avr/include/util/delay.h **** 	uint16_t __ticks;
+ 191:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 4e3) * __ms;
+ 192:/usr/lib/avr/include/util/delay.h **** 	if (__tmp < 1.0)
+ 193:/usr/lib/avr/include/util/delay.h **** 		__ticks = 1;
+ 194:/usr/lib/avr/include/util/delay.h **** 	else if (__tmp > 65535)
+ 195:/usr/lib/avr/include/util/delay.h **** 	{
+ 196:/usr/lib/avr/include/util/delay.h **** 		//	__ticks = requested delay in 1/10 ms
+ 197:/usr/lib/avr/include/util/delay.h **** 		__ticks = (uint16_t) (__ms * 10.0);
+ 198:/usr/lib/avr/include/util/delay.h **** 		while(__ticks)
+ 199:/usr/lib/avr/include/util/delay.h **** 		{
+ 200:/usr/lib/avr/include/util/delay.h **** 			// wait 1/10 ms
+ 201:/usr/lib/avr/include/util/delay.h **** 			_delay_loop_2(((F_CPU) / 4e3) / 10);
+ 202:/usr/lib/avr/include/util/delay.h **** 			__ticks --;
+ 203:/usr/lib/avr/include/util/delay.h **** 		}
+ 204:/usr/lib/avr/include/util/delay.h **** 		return;
+ 205:/usr/lib/avr/include/util/delay.h **** 	}
+ 206:/usr/lib/avr/include/util/delay.h **** 	else
+ 207:/usr/lib/avr/include/util/delay.h **** 		__ticks = (uint16_t)__tmp;
+ 208:/usr/lib/avr/include/util/delay.h **** 	_delay_loop_2(__ticks);
+ 209:/usr/lib/avr/include/util/delay.h **** #endif
+ 210:/usr/lib/avr/include/util/delay.h **** }
+ 211:/usr/lib/avr/include/util/delay.h **** 
+ 212:/usr/lib/avr/include/util/delay.h **** /**
+ 213:/usr/lib/avr/include/util/delay.h ****    \ingroup util_delay
+ 214:/usr/lib/avr/include/util/delay.h **** 
+ 215:/usr/lib/avr/include/util/delay.h ****    Perform a delay of \c __us microseconds, using _delay_loop_1().
+ 216:/usr/lib/avr/include/util/delay.h **** 
+ 217:/usr/lib/avr/include/util/delay.h ****    The macro F_CPU is supposed to be defined to a
+ 218:/usr/lib/avr/include/util/delay.h ****    constant defining the CPU clock frequency (in Hertz).
+ 219:/usr/lib/avr/include/util/delay.h **** 
+ 220:/usr/lib/avr/include/util/delay.h ****    The maximal possible delay is 768 us / F_CPU in MHz.
+ 221:/usr/lib/avr/include/util/delay.h **** 
+ 222:/usr/lib/avr/include/util/delay.h ****    If the user requests a delay greater than the maximal possible one,
+ 223:/usr/lib/avr/include/util/delay.h ****    _delay_us() will automatically call _delay_ms() instead.  The user
+ 224:/usr/lib/avr/include/util/delay.h ****    will not be informed about this case.
+ 225:/usr/lib/avr/include/util/delay.h **** 
+ 226:/usr/lib/avr/include/util/delay.h ****    If the avr-gcc toolchain has __builtin_avr_delay_cycles()
+ 227:/usr/lib/avr/include/util/delay.h ****    support, maximal possible delay is 4294967.295 us/ F_CPU in MHz. For
+ 228:/usr/lib/avr/include/util/delay.h ****    values greater than the maximal possible delay, overflow results in
+ 229:/usr/lib/avr/include/util/delay.h ****    no delay i.e., 0us.
+ 230:/usr/lib/avr/include/util/delay.h **** 
+ 231:/usr/lib/avr/include/util/delay.h ****    Conversion of \c __us into clock cycles may not always result in
+ 232:/usr/lib/avr/include/util/delay.h ****    integer.  By default, the clock cycles rounded up to next
+ 233:/usr/lib/avr/include/util/delay.h ****    integer. This ensures that the user gets at least \c __us
+ 234:/usr/lib/avr/include/util/delay.h ****    microseconds of delay.
+ 235:/usr/lib/avr/include/util/delay.h **** 
+ 236:/usr/lib/avr/include/util/delay.h ****    Alternatively, by defining the macro \c __DELAY_ROUND_DOWN__, or
+ 237:/usr/lib/avr/include/util/delay.h ****    \c __DELAY_ROUND_CLOSEST__, before including this header file, the
+ 238:/usr/lib/avr/include/util/delay.h ****    algorithm can be made to round down, or round to closest integer,
+ 239:/usr/lib/avr/include/util/delay.h ****    respectively.
+ 240:/usr/lib/avr/include/util/delay.h **** 
+ 241:/usr/lib/avr/include/util/delay.h ****    \note
+ 242:/usr/lib/avr/include/util/delay.h **** 
+ 243:/usr/lib/avr/include/util/delay.h ****    The implementation of _delay_ms() based on
+ 244:/usr/lib/avr/include/util/delay.h ****    __builtin_avr_delay_cycles() is not backward compatible with older
+ 245:/usr/lib/avr/include/util/delay.h ****    implementations.  In order to get functionality backward compatible
+ 246:/usr/lib/avr/include/util/delay.h ****    with previous versions, the macro \c __DELAY_BACKWARD_COMPATIBLE__
+ 247:/usr/lib/avr/include/util/delay.h ****    must be defined before including this header file. Also, the
+ 248:/usr/lib/avr/include/util/delay.h ****    backward compatible algorithm will be chosen if the code is
+ 249:/usr/lib/avr/include/util/delay.h ****    compiled in a <em>freestanding environment</em> (GCC option
+ 250:/usr/lib/avr/include/util/delay.h ****    \c -ffreestanding), as the math functions required for rounding are
+ 251:/usr/lib/avr/include/util/delay.h ****    not available to the compiler then.
+ 252:/usr/lib/avr/include/util/delay.h **** 
+ 253:/usr/lib/avr/include/util/delay.h ****  */
+ 254:/usr/lib/avr/include/util/delay.h **** void
+ 255:/usr/lib/avr/include/util/delay.h **** _delay_us(double __us)
+ 256:/usr/lib/avr/include/util/delay.h **** {
+ 257:/usr/lib/avr/include/util/delay.h **** 	double __tmp ;
+ 258:/usr/lib/avr/include/util/delay.h **** #if __HAS_DELAY_CYCLES && defined(__OPTIMIZE__) && \
+ 259:/usr/lib/avr/include/util/delay.h ****   !defined(__DELAY_BACKWARD_COMPATIBLE__) &&	   \
+ 260:/usr/lib/avr/include/util/delay.h ****   __STDC_HOSTED__
+ 261:/usr/lib/avr/include/util/delay.h **** 	uint32_t __ticks_dc;
+ 262:/usr/lib/avr/include/util/delay.h **** 	extern void __builtin_avr_delay_cycles(unsigned long);
+ 263:/usr/lib/avr/include/util/delay.h **** 	__tmp = ((F_CPU) / 1e6) * __us;
+ 264:/usr/lib/avr/include/util/delay.h **** 
+ 265:/usr/lib/avr/include/util/delay.h **** 	#if defined(__DELAY_ROUND_DOWN__)
+ 266:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)fabs(__tmp);
+ 267:/usr/lib/avr/include/util/delay.h **** 
+ 268:/usr/lib/avr/include/util/delay.h **** 	#elif defined(__DELAY_ROUND_CLOSEST__)
+ 269:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(fabs(__tmp)+0.5);
+ 270:/usr/lib/avr/include/util/delay.h **** 
+ 271:/usr/lib/avr/include/util/delay.h **** 	#else
+ 272:/usr/lib/avr/include/util/delay.h **** 		//round up by default
+ 273:/usr/lib/avr/include/util/delay.h **** 		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+ 274:/usr/lib/avr/include/util/delay.h **** 	#endif
+ 275:/usr/lib/avr/include/util/delay.h **** 
+ 276:/usr/lib/avr/include/util/delay.h **** 	__builtin_avr_delay_cycles(__ticks_dc);
+  67               		.loc 2 276 0
+  68 0020 85E0      		ldi r24,lo8(5)
+  69 0022 8A95      	1:	dec r24
+  70 0024 01F4      		brne 1b
+  71 0026 0000      		nop
+  72               	.LVL2:
+  73               	.LBE11:
+  74               	.LBE10:
+  20:lcd_1602A.c   **** 	_delay_us (1);
+  21:lcd_1602A.c   **** 	set_bits(port, 1, lcd_enable_pin);
+  75               		.loc 1 21 0
+  76 0028 FF92      		push r15
+  77               	.LCFI10:
+  78               		.cfi_def_cfa_offset 13
+  79 002a 0F93      		push r16
+  80               	.LCFI11:
+  81               		.cfi_def_cfa_offset 14
+  82 002c 1F93      		push r17
+  83               	.LCFI12:
+  84               		.cfi_def_cfa_offset 15
+  85 002e DF93      		push r29
+  86               	.LCFI13:
+  87               		.cfi_def_cfa_offset 16
+  88 0030 CF93      		push r28
+  89               	.LCFI14:
+  90               		.cfi_def_cfa_offset 17
+  91 0032 0E94 0000 		call set_bits
+  92               	.LVL3:
+  93               	.LBB12:
+  94               	.LBB13:
+  95               		.loc 2 276 0
+  96 0036 95E0      		ldi r25,lo8(5)
+  97 0038 9A95      	1:	dec r25
+  98 003a 01F4      		brne 1b
+  99 003c 0000      		nop
+ 100               	.LVL4:
+ 101               	.LBE13:
+ 102               	.LBE12:
+  22:lcd_1602A.c   **** 	_delay_us (1);
+  23:lcd_1602A.c   **** 	clear_bits(port, 1, lcd_enable_pin);
+ 103               		.loc 1 23 0
+ 104 003e FF92      		push r15
+ 105               	.LCFI15:
+ 106               		.cfi_def_cfa_offset 18
+ 107 0040 0F93      		push r16
+ 108               	.LCFI16:
+ 109               		.cfi_def_cfa_offset 19
+ 110 0042 1F93      		push r17
+ 111               	.LCFI17:
+ 112               		.cfi_def_cfa_offset 20
+ 113 0044 DF93      		push r29
+ 114               	.LCFI18:
+ 115               		.cfi_def_cfa_offset 21
+ 116 0046 CF93      		push r28
+ 117               	.LCFI19:
+ 118               		.cfi_def_cfa_offset 22
+ 119 0048 0E94 0000 		call clear_bits
+ 120               	.LVL5:
+  24:lcd_1602A.c   **** }
+ 121               		.loc 1 24 0
+ 122 004c 8DB7      		in r24,__SP_L__
+ 123 004e 9EB7      		in r25,__SP_H__
+ 124 0050 0F96      		adiw r24,15
+ 125 0052 0FB6      		in __tmp_reg__,__SREG__
+ 126 0054 F894      		cli
+ 127 0056 9EBF      		out __SP_H__,r25
+ 128 0058 0FBE      		out __SREG__,__tmp_reg__
+ 129 005a 8DBF      		out __SP_L__,r24
+ 130               	.LCFI20:
+ 131               		.cfi_def_cfa_offset 7
+ 132               	/* epilogue start */
+ 133 005c DF91      		pop r29
+ 134 005e CF91      		pop r28
+ 135               	.LVL6:
+ 136 0060 1F91      		pop r17
+ 137 0062 0F91      		pop r16
+ 138 0064 FF90      		pop r15
+ 139 0066 0895      		ret
+ 140               		.cfi_endproc
+ 141               	.LFE6:
+ 143               	.global	toggle_LCD_EN_test
+ 145               	toggle_LCD_EN_test:
+ 146               	.LFB7:
+  25:lcd_1602A.c   **** 
+  26:lcd_1602A.c   **** extern void toggle_LCD_EN_test(struct portpin *test) 
+  27:lcd_1602A.c   **** 
+  28:lcd_1602A.c   **** {
+ 147               		.loc 1 28 0
+ 148               		.cfi_startproc
+ 149               	.LVL7:
+ 150 0068 1F93      		push r17
+ 151               	.LCFI21:
+ 152               		.cfi_def_cfa_offset 3
+ 153               		.cfi_offset 17, -2
+ 154 006a CF93      		push r28
+ 155               	.LCFI22:
+ 156               		.cfi_def_cfa_offset 4
+ 157               		.cfi_offset 28, -3
+ 158 006c DF93      		push r29
+ 159               	.LCFI23:
+ 160               		.cfi_def_cfa_offset 5
+ 161               		.cfi_offset 29, -4
+ 162               	/* prologue: function */
+ 163               	/* frame size = 0 */
+ 164               	/* stack size = 3 */
+ 165               	.L__stack_usage = 3
+ 166 006e EC01      		movw r28,r24
+ 167               	.LVL8:
+ 168               	.LBB14:
+ 169               	.LBB15:
+ 170               		.loc 2 276 0
+ 171 0070 85E0      		ldi r24,lo8(5)
+ 172 0072 8A95      	1:	dec r24
+ 173 0074 01F4      		brne 1b
+ 174               	.LVL9:
+ 175 0076 0000      		nop
+ 176               	.LVL10:
+ 177               	.LBE15:
+ 178               	.LBE14:
+  29:lcd_1602A.c   **** 	//clear_bits(test.port, 1, test->pin);
+  30:lcd_1602A.c   **** 	_delay_us (1);
+  31:lcd_1602A.c   **** 	set_bits(test->port, 1, test->pin);
+ 179               		.loc 1 31 0
+ 180 0078 8A81      		ldd r24,Y+2
+ 181 007a 1F92      		push __zero_reg__
+ 182               	.LCFI24:
+ 183               		.cfi_def_cfa_offset 6
+ 184 007c 8F93      		push r24
+ 185               	.LCFI25:
+ 186               		.cfi_def_cfa_offset 7
+ 187 007e 11E0      		ldi r17,lo8(1)
+ 188 0080 1F93      		push r17
+ 189               	.LCFI26:
+ 190               		.cfi_def_cfa_offset 8
+ 191 0082 8981      		ldd r24,Y+1
+ 192 0084 8F93      		push r24
+ 193               	.LCFI27:
+ 194               		.cfi_def_cfa_offset 9
+ 195 0086 8881      		ld r24,Y
+ 196 0088 8F93      		push r24
+ 197               	.LCFI28:
+ 198               		.cfi_def_cfa_offset 10
+ 199 008a 0E94 0000 		call set_bits
+ 200               	.LVL11:
+ 201               	.LBB16:
+ 202               	.LBB17:
+ 203               		.loc 2 276 0
+ 204 008e 95E0      		ldi r25,lo8(5)
+ 205 0090 9A95      	1:	dec r25
+ 206 0092 01F4      		brne 1b
+ 207 0094 0000      		nop
+ 208               	.LVL12:
+ 209               	.LBE17:
+ 210               	.LBE16:
+  32:lcd_1602A.c   **** 	_delay_us (1);
+  33:lcd_1602A.c   **** 	clear_bits(test->port, 1, test->pin);
+ 211               		.loc 1 33 0
+ 212 0096 8A81      		ldd r24,Y+2
+ 213 0098 1F92      		push __zero_reg__
+ 214               	.LCFI29:
+ 215               		.cfi_def_cfa_offset 11
+ 216 009a 8F93      		push r24
+ 217               	.LCFI30:
+ 218               		.cfi_def_cfa_offset 12
+ 219 009c 1F93      		push r17
+ 220               	.LCFI31:
+ 221               		.cfi_def_cfa_offset 13
+ 222 009e 8981      		ldd r24,Y+1
+ 223 00a0 8F93      		push r24
+ 224               	.LCFI32:
+ 225               		.cfi_def_cfa_offset 14
+ 226 00a2 8881      		ld r24,Y
+ 227 00a4 8F93      		push r24
+ 228               	.LCFI33:
+ 229               		.cfi_def_cfa_offset 15
+ 230 00a6 0E94 0000 		call clear_bits
+ 231               	.LVL13:
+  34:lcd_1602A.c   **** 
+  35:lcd_1602A.c   **** }
+ 232               		.loc 1 35 0
+ 233 00aa 8DB7      		in r24,__SP_L__
+ 234 00ac 9EB7      		in r25,__SP_H__
+ 235 00ae 0A96      		adiw r24,10
+ 236 00b0 0FB6      		in __tmp_reg__,__SREG__
+ 237 00b2 F894      		cli
+ 238 00b4 9EBF      		out __SP_H__,r25
+ 239 00b6 0FBE      		out __SREG__,__tmp_reg__
+ 240 00b8 8DBF      		out __SP_L__,r24
+ 241               	.LCFI34:
+ 242               		.cfi_def_cfa_offset 5
+ 243               	/* epilogue start */
+ 244 00ba DF91      		pop r29
+ 245 00bc CF91      		pop r28
+ 246               	.LVL14:
+ 247 00be 1F91      		pop r17
+ 248 00c0 0895      		ret
+ 249               		.cfi_endproc
+ 250               	.LFE7:
+ 252               		.comm	LCD_EN_test,3,1
+ 253               	.Letext0:
+ 254               		.file 3 "/usr/lib/avr/include/stdint.h"
+ 255               		.file 4 "atmel_io_control.h"
+ 256               		.file 5 "atmel_pin_config.h"
 DEFINED SYMBOLS
                             *ABS*:0000000000000000 lcd_1602A.c
-     /tmp/ccss04CD.s:2      *ABS*:000000000000003e __SP_H__
-     /tmp/ccss04CD.s:3      *ABS*:000000000000003d __SP_L__
-     /tmp/ccss04CD.s:4      *ABS*:000000000000003f __SREG__
-     /tmp/ccss04CD.s:5      *ABS*:0000000000000000 __tmp_reg__
-     /tmp/ccss04CD.s:6      *ABS*:0000000000000001 __zero_reg__
-     /tmp/ccss04CD.s:12     .text:0000000000000000 get_lcd_busy_flag
-     /tmp/ccss04CD.s:225    .text:00000000000000ea toggle_LCD_EN
+     /tmp/cc8xewI9.s:2      *ABS*:000000000000003e __SP_H__
+     /tmp/cc8xewI9.s:3      *ABS*:000000000000003d __SP_L__
+     /tmp/cc8xewI9.s:4      *ABS*:000000000000003f __SREG__
+     /tmp/cc8xewI9.s:5      *ABS*:0000000000000000 __tmp_reg__
+     /tmp/cc8xewI9.s:6      *ABS*:0000000000000001 __zero_reg__
+     /tmp/cc8xewI9.s:12     .text:0000000000000000 toggle_LCD_EN
+     /tmp/cc8xewI9.s:145    .text:0000000000000068 toggle_LCD_EN_test
+                            *COM*:0000000000000003 LCD_EN_test
 
 UNDEFINED SYMBOLS
 clear_bits
 set_bits
+__do_clear_bss

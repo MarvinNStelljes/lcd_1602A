@@ -29,12 +29,15 @@ long_line_column=72
 
 [files]
 current_page=0
-FILE_NAME_0=6370;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmain.c;0;4
-FILE_NAME_1=1349;Make;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmakefile;0;4
-FILE_NAME_2=220;None;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fblink.geany;0;4
-FILE_NAME_3=106;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Flcd_1602A.c;0;4
-FILE_NAME_4=1098;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Flcd_1602A.h;0;4
-FILE_NAME_5=224;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmain.h;0;4
+FILE_NAME_0=3581;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmain.c;0;4
+FILE_NAME_1=374;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmain.h;0;4
+FILE_NAME_2=14928;Make;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fmakefile;0;4
+FILE_NAME_3=526;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Flcd_1602A.c;0;4
+FILE_NAME_4=200;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Flcd_1602A.h;0;4
+FILE_NAME_5=181;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fatmel_io_control.c;0;4
+FILE_NAME_6=484;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fatmel_io_control.h;0;4
+FILE_NAME_7=231;C++;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fatmel_pin_config.h;0;4
+FILE_NAME_8=106;C;0;EUTF-8;1;1;0;%2Fhome%2Flinux-ms%2Flab%2Fdev_boards%2Farduino%2Fsw%2Fblink%2Fatmel_pin_config.c;0;4
 
 [VTE]
 last_dir=/home/linux-ms

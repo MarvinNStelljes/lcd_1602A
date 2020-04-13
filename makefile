@@ -78,7 +78,8 @@ OBJDIR = obj
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC = $(TARGET).c lcd_1602A.c
+#SRC = $(TARGET).c
+SRC = $(TARGET).c lcd_1602A.c atmel_io_control.c atmel_pin_config.c
 
 
 # List C++ source files here. (C dependencies are automatically generated.)
@@ -158,7 +159,7 @@ CFLAGS += -Wundef
 #CFLAGS += -Wsign-compare
 
 #No Warnings
-CFLAGS += -w
+#CFLAGS += -w
 
 
 CFLAGS += -Wa,-adhlns=$(<:%.c=$(OBJDIR)/%.lst)
